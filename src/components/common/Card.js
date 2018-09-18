@@ -1,12 +1,13 @@
 import React from 'react';
 import { View } from 'react-native';
 
-const Card = ({ children }) => {
-  return <View style={styles.containerStyle}>{children}</View>;
+const Card = ({ children, style }) => {
+  return <View style={[styles.containerStyle, style]}>{children}</View>;
 };
 
 const styles = {
   containerStyle: {
+    flex: 1,
     borderWidth: 1,
     borderRadius: 2,
     borderColor: '#ddd',
