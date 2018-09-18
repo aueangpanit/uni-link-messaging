@@ -25,7 +25,7 @@ class LoginForm extends Component {
     this.setState({ error: '', loading: true });
 
     try {
-      await firebase.auth().signInWithEmailAndPassword(email, password);
+      await firebase.auth().signInWithEmailAndPassword(email.trim(), password);
       this.onLoginSuccess();
     } catch (error) {
       this.onLoginFail();
