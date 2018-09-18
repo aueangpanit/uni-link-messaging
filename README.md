@@ -2,4 +2,5 @@
 
 ## run!
 > npm install
+
 > expo start
