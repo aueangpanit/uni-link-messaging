@@ -7,7 +7,7 @@ class MessageListScreen extends Component {
   };
 
   render() {
-    <MessageList />;
+    return <MessageList />;
   }
 }
 

@@ -34,6 +34,7 @@ class LoginForm extends Component {
 
   onLoginSuccess() {
     this.setState({ error: '', loading: false, email: '', password: '' });
+    this.props.navigation.navigate('App');
   }
 
   onLoginFail() {

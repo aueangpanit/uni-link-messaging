@@ -28,6 +28,7 @@ class SignupForm extends Component {
 
   onSignupSuccess() {
     this.setState({ error: '', loading: false, email: '', password: '' });
+    this.props.navigation.navigate('App');
   }
 
   onSignupFail(error) {
