@@ -1,0 +1,38 @@
+{
+	users:
+	{
+		user_uid : 
+		{
+			friend_requests: [ uid: , ... ],
+			friends: [ uid: , ... ],
+			room: [ room_id: , ... ]
+		},
+		.
+		.
+		.
+	},
+	rooms:
+	{
+		room_id:
+		{
+			user: [ uid: , ...],	// user in this room
+			messages: 
+			[
+				message: 
+				{ 
+					uid: user_id, 			// user who sent the message
+					time: sent_time, 		// time sent
+					type: text, image, video etc.,	// content type
+					seen: [ uid, ...] 		// users who saw the message
+					content: message		// content data
+				},
+				.
+				.
+				.
+			]
+		},
+		.
+		.
+		.
+	} 
+}
