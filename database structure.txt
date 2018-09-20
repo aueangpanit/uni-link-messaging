@@ -1,44 +1,25 @@
 {
   "rules": {
+    "usernames": {
+      ".read": true,
+			"$username": {
+        ".write": "auth != null",
+				".validate": "newData.val() == auth.uid"
+      }
+    },
     "users": {
       "$uid": {
-        ".read": "$uid == auth.uid", // can only read own data
-        ".write": "$uid == auth.uid", // can only write own data
+        ".read": "$uid == auth.uid",
+        "username": {
+        	".write": "$uid == auth.uid",
+        },
         "friendRequest": {
-          /* write: 		> goal: the sender of the request can only write in 
-           * 										his own space and the receiver's 
-           * 										friendRequest space
-           * 							description:
-           * 							either sender == uid && receiver == auth.uid 
-           * 					  	or 		 sender == auth.uid && receiver == uid
-           * 							code: (newData.child('sender').val() == $uid && 
-           * 										 newData.child('receiver').val() == auth.uid || 
-           * 										 newData.child('sender').val() == auth.uid && 
-           * 										 newData.child('receiver').val() == $uid)
-           */ 
-          ".write": " (newData.child('sender').val() == $uid && newData.child('receiver').val() == auth.uid || newData.child('sender').val() == auth.uid && newData.child('receiver').val() == $uid)",
-          /* validate:	> goal: check if new data have valid keys
-           * 							description: new data must have ['sender', 'receiver'] key,
-           * 							code: newData.hasChildren(['sender', 'receiver'])
-           * 
-           * 					 	> goal: check sender type
-           * 							description: sender must be of type string
-           * 							code: newData.child('sender').isString()
-           * 
-           * 					 	> goal: check receiver type
-           * 						  description: receiver must be of type string
-           * 							code: newData.child('receiver').isisString()
-           *
-           * 						>	goal: prevent duplicate request
-           * 							description: 
-           * 							either sender == uid && receriver value is unique
-           * 						  or     sender == auth.uid && sender value is unique
-           * 							code: (newData.child('sender').val() == $uid &&
-           * 										 newData.child('receiver').val() != data.child('receiver').val() ||
-           * 										 newData.child('sender').val()  == auth.uid &&
-           * 										 newData.child('sender').val() != data.child('sender').val())
-           */
-          ".validate": "newData.hasChildren(['sender', 'receiver']) && newData.child('sender').isString() && newData.child('receiver').isString() && (newData.child('sender').val() == $uid && newData.child('receiver').val() != data.child('receiver').val() || newData.child('sender').val()  == auth.uid && newData.child('sender').val() != data.child('sender').val())",
+          "$sender": {
+            "$receiver": {
+          		".write": "$sender == auth.uid && ($uid == auth.uid || $uid == $receiver)",
+              ".validate": "$sender != $receiver && newData.val() === true"
+            }
+          }
         }
       }
     }

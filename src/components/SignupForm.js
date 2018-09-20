@@ -2,26 +2,58 @@ import firebase from 'firebase';
 import React, { Component } from 'react';
 import { StyleSheet, Text } from 'react-native';
 import { Card, CardSection, Input, Button, Spinner } from './common';
+import { getUsernameIndexRef, getUserUsernameRef } from '../utils';
 
 class SignupForm extends Component {
   state = {
+    username: '',
     email: '',
     password: '',
     error: '',
     loading: false
   };
 
+  async validate() {
+    const { username } = this.state;
+    let error = '';
+    // check if username already exists
+    const usernameIndexRef = getUsernameIndexRef(username);
+    const snapshot = await usernameIndexRef.once('value');
+    if (snapshot.val()) {
+      error = 'Username already exists.';
+    }
+
+    this.setState({ error });
+    return error;
+  }
+
+  async createUser() {
+    const { email, password, username } = this.state;
+    // create user
+    await firebase
+      .auth()
+      .createUserWithEmailAndPassword(email.trim(), password);
+    const { uid } = firebase.auth().currentUser; // get current user
+    // create username index
+    const usernameIndexRef = getUsernameIndexRef(username);
+    await usernameIndexRef.set(uid);
+    // set username field in user's tree
+    const userUsernameRef = getUserUsernameRef(uid);
+    await userUsernameRef.set(username);
+  }
+
   async onButtonPress() {
-    const { email, password } = this.state;
+    this.setState({ loading: true });
+    const error = await this.validate();
 
-    this.setState({ error: '', loading: true });
-
-    try {
-      await firebase
-        .auth()
-        .createUserWithEmailAndPassword(email.trim(), password);
-      this.onSignupSuccess();
-    } catch (error) {
+    if (!error) {
+      try {
+        await this.createUser();
+        this.onSignupSuccess();
+      } catch (error) {
+        this.onSignupFail(error);
+      }
+    } else {
       this.onSignupFail(error);
     }
   }
@@ -54,10 +86,18 @@ class SignupForm extends Component {
   }
 
   render() {
-    const { email, password } = this.state;
+    const { email, password, username } = this.state;
 
     return (
       <Card>
+        <CardSection>
+          <Input
+            placeholder="username"
+            label="Username"
+            value={username}
+            onChangeText={username => this.setState({ username })}
+          />
+        </CardSection>
         <CardSection>
           <Input
             placeholder="user@gmail.com"
