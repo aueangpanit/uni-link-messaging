@@ -1,18 +1,21 @@
 import firebase from 'firebase';
 import { NavigationActions } from 'react-navigation';
+import { getUserFriendRequestRef, getReceiverFriendRequestRef } from '../utils';
 
 export const sendFriendRequest = ({ uid }) => async dispatch => {
   const currentUser = firebase.auth().currentUser;
   try {
-    await firebase
-      .database()
-      .ref(`/users/${currentUser.uid}/friendRequest/${currentUser.uid}/${uid}`)
-      .set(true);
+    const userFriendRequestRef = getUserFriendRequestRef({
+      senderId: currentUser.uid,
+      receiverId: uid
+    });
+    await userFriendRequestRef.set(true);
 
-    await firebase
-      .database()
-      .ref(`/users/${uid}/friendRequest/${currentUser.uid}/${uid}`)
-      .set(true);
+    const receiverFriendRequestRef = getReceiverFriendRequestRef({
+      senderId: currentUser.uid,
+      receiverId: uid
+    });
+    await receiverFriendRequestRef.set(true);
 
     dispatch(NavigationActions.navigate({ routeName: 'FriendList' }));
   } catch (error) {
