@@ -14,7 +14,9 @@ class Profile extends Component {
     return (
       <Card>
         <CardSection>
-          <Text>{firebase.auth().currentUser.email}</Text>
+          <Text>{`Email: ${firebase.auth().currentUser.email}\nuid: ${
+            firebase.auth().currentUser.uid
+          }`}</Text>
         </CardSection>
         <CardSection>
           <Button onPress={this.onButtonPress.bind(this)}>Log out</Button>

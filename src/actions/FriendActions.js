@@ -6,19 +6,13 @@ export const sendFriendRequest = ({ uid }) => async dispatch => {
   try {
     await firebase
       .database()
-      .ref(`/users/${currentUser.uid}/friendRequest/`)
-      .push({
-        sender: currentUser.uid,
-        receiver: uid
-      });
+      .ref(`/users/${currentUser.uid}/friendRequest/${currentUser.uid}/${uid}`)
+      .set(true);
 
     await firebase
       .database()
-      .ref(`/users/${uid}/friendRequest/`)
-      .push({
-        sender: currentUser.uid,
-        receiver: uid
-      });
+      .ref(`/users/${uid}/friendRequest/${currentUser.uid}/${uid}`)
+      .set(true);
 
     dispatch(NavigationActions.navigate({ routeName: 'FriendList' }));
   } catch (error) {

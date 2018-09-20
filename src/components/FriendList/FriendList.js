@@ -40,7 +40,7 @@ const mapStateToProps = state => {
   const { friendRequest } = state.user;
 
   const request = _.map(friendRequest, (val, id) => {
-    return { ...val, id };
+    return { sender: id, receiver: val };
   });
 
   return { request };

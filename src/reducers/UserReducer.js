@@ -7,7 +7,8 @@ const INITIAL_STATE = {
 export default (state = INITIAL_STATE, action) => {
   switch (action.type) {
     case FETCH_USER_SUCCESS:
-      return action.payload;
+      // action.payload = null or action.payload = user object from realtime database
+      return action.payload || INITIAL_STATE;
     default:
       return state;
   }
