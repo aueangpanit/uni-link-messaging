@@ -39,8 +39,8 @@ class FriendList extends Component {
 const mapStateToProps = state => {
   const { friendRequest } = state.user;
 
-  const request = _.map(friendRequest, (val, id) => {
-    return { sender: id, receiver: val };
+  const request = _.map(friendRequest, (receivers, sender) => {
+    return { sender, receiver: _.map(receivers, (val, receiver) => receiver) };
   });
 
   return { request };
