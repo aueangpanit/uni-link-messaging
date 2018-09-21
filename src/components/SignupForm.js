@@ -1,8 +1,9 @@
 import firebase from 'firebase';
+import axios from 'axios';
 import React, { Component } from 'react';
 import { StyleSheet, Text } from 'react-native';
 import { Card, CardSection, Input, Button, Spinner } from './common';
-import { getUsernameIndexRef, getUserUsernameRef } from '../utils';
+import { FirebaseUtils } from '../utils';
 
 class SignupForm extends Component {
   state = {
@@ -17,7 +18,7 @@ class SignupForm extends Component {
     const { username } = this.state;
     let error = '';
     // check if username already exists
-    const usernameIndexRef = getUsernameIndexRef(username);
+    const usernameIndexRef = FirebaseUtils.getUsernameIndexRef(username);
     const snapshot = await usernameIndexRef.once('value');
     if (snapshot.val()) {
       error = 'Username already exists.';
@@ -35,11 +36,22 @@ class SignupForm extends Component {
       .createUserWithEmailAndPassword(email.trim(), password);
     const { uid } = firebase.auth().currentUser; // get current user
     // create username index
-    const usernameIndexRef = getUsernameIndexRef(username);
+    const usernameIndexRef = FirebaseUtils.getUsernameIndexRef(username);
     await usernameIndexRef.set(uid);
     // set username field in user's tree
-    const userUsernameRef = getUserUsernameRef(uid);
-    await userUsernameRef.set(username);
+    const userUsernameRef = FirebaseUtils.getUserUsernameRef(uid);
+    await axios.post(
+      'https://us-central1-uni-link-messaging-eba97.cloudfunctions.net/dbUsersUsernameOnUpdate',
+      {
+        uid,
+        username
+      }
+    );
+    console.log('done');
+    //await userUsernameRef.set(username);
+    // set user's visibility to true
+    const userVisibilityRef = FirebaseUtils.getUserVisibilityRef(uid);
+    await userVisibilityRef.set(true);
   }
 
   async onButtonPress() {

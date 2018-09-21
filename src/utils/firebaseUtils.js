@@ -1,17 +1,40 @@
 import firebase from 'firebase';
 
-export const getUsernameIndexRef = username =>
-  firebase.database().ref(`/usernames/${username}`);
+class FirebaseUtils {
+  static getUsernameIndexRef = username =>
+    firebase.database().ref(`/usernames/${username}`);
 
-export const getUserUsernameRef = uid =>
-  firebase.database().ref(`users/${uid}/username`);
+  static getUserUsernameRef = uid =>
+    firebase.database().ref(`/users/${uid}/username`);
 
-export const getUserFriendRequestRef = ({ senderId, receiverId }) =>
-  firebase
-    .database()
-    .ref(`/users/${senderId}/friendRequest/${senderId}/${receiverId}`);
+  static getUserVisibilityRef = uid =>
+    firebase.database().ref(`/users/${uid}/visible`);
 
-export const getReceiverFriendRequestRef = ({ senderId, receiverId }) =>
-  firebase
-    .database()
-    .ref(`/users/${receiverId}/friendRequest/${senderId}/${receiverId}`);
+  static getUserFriendRequestRef = ({ senderId, receiverId }) =>
+    firebase
+      .database()
+      .ref(`/users/${senderId}/friendRequest/${senderId}/${receiverId}`);
+
+  static getReceiverFriendRequestRef = ({ senderId, receiverId }) =>
+    firebase
+      .database()
+      .ref(`/users/${receiverId}/friendRequest/${senderId}/${receiverId}`);
+
+  static userExists = uid => {
+    console.log(uid);
+    return firebase
+      .database()
+      .ref(`/users/${uid}/visible`)
+      .once('value')
+      .then(snapshot => {
+        return snapshot.val() === true;
+      });
+  };
+
+  static getUidFromUsername = username => {
+    const usernameIndexRef = FirebaseUtils.getUsernameIndexRef(username);
+    return usernameIndexRef.once('value').then(snapshot => snapshot.val());
+  };
+}
+
+export { FirebaseUtils };

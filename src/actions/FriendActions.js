@@ -1,19 +1,24 @@
 import firebase from 'firebase';
 import { NavigationActions } from 'react-navigation';
-import { getUserFriendRequestRef, getReceiverFriendRequestRef } from '../utils';
+import { FirebaseUtils } from '../utils';
 
-export const sendFriendRequest = ({ uid }) => async dispatch => {
-  const currentUser = firebase.auth().currentUser;
+export const sendFriendRequest = ({ value }) => async dispatch => {
+  console.log('value: ' + value);
+  const senderId = firebase.auth().currentUser.uid;
+  const receiverId = (await FirebaseUtils.userExists(value))
+    ? value
+    : await FirebaseUtils.getUidFromUsername(value);
   try {
-    const userFriendRequestRef = getUserFriendRequestRef({
-      senderId: currentUser.uid,
-      receiverId: uid
+    if (!receiverId) throw new Error('User does not exist.');
+    const userFriendRequestRef = FirebaseUtils.getUserFriendRequestRef({
+      senderId,
+      receiverId
     });
     await userFriendRequestRef.set(true);
 
-    const receiverFriendRequestRef = getReceiverFriendRequestRef({
-      senderId: currentUser.uid,
-      receiverId: uid
+    const receiverFriendRequestRef = FirebaseUtils.getReceiverFriendRequestRef({
+      senderId,
+      receiverId
     });
     await receiverFriendRequestRef.set(true);
 

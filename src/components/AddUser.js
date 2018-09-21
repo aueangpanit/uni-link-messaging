@@ -6,17 +6,17 @@ import { sendFriendRequest } from '../actions';
 
 class AddUser extends Component {
   state = {
-    uid: '',
+    value: '',
     error: '',
     loading: false
   };
 
   validate() {
-    const { uid } = this.state;
+    const { value } = this.state;
     const currentUser = firebase.auth().currentUser;
     let error = '';
 
-    if (currentUser.uid === uid) {
+    if (currentUser.uid === value) {
       error = "You can't send yourself a friend request!";
     }
 
@@ -26,11 +26,11 @@ class AddUser extends Component {
 
   onButtonPress() {
     const error = this.validate();
-    const { uid, loading } = this.state;
+    const { value, loading } = this.state;
     const { sendFriendRequest } = this.props;
 
     if (!error && !loading) {
-      sendFriendRequest({ uid });
+      sendFriendRequest({ value });
     }
   }
 
@@ -46,7 +46,7 @@ class AddUser extends Component {
   }
 
   render() {
-    const { uid } = this.state;
+    const { value } = this.state;
 
     return (
       <Card>
@@ -54,8 +54,8 @@ class AddUser extends Component {
           <Input
             placeholder="OoDU2lR4xgdt2WAHdDiWppxLNsm1"
             label="uid"
-            value={uid}
-            onChangeText={uid => this.setState({ uid })}
+            value={value}
+            onChangeText={value => this.setState({ value })}
           />
         </CardSection>
         <CardSection>{this.renderButton()}</CardSection>

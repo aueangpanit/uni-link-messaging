@@ -10,6 +10,11 @@
     "users": {
       "$uid": {
         ".read": "$uid == auth.uid",
+        "visible": {
+          ".read": "auth != null",
+          ".write": "$uid == auth.uid",
+          ".validate": "newData.isBoolean()"
+        },
         "username": {
         	".write": "$uid == auth.uid",
         },
