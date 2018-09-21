@@ -9,5 +9,11 @@ try {
 module.exports = functions.database
   .ref('/users/:uid/username')
   .onWrite((eventSnapshot, context) => {
-    const { uid } = admin.database().ref(`/usernames/`);
+    const { uid } = context.params;
+    const username = eventSnapshot.val();
+
+    admin
+      .database()
+      .ref(`/usernames/${username}`)
+      .set(uid);
   });
