@@ -1,4 +1,5 @@
 import firebase from 'firebase';
+import 'firebase/functions';
 import React, { Component } from 'react';
 import ReduxThunk from 'redux-thunk';
 import { Provider } from 'react-redux';
@@ -16,6 +17,8 @@ class App extends Component {
       storageBucket: 'uni-link-messaging-eba97.appspot.com',
       messagingSenderId: '970521514552'
     });
+
+    firebase.functions();
   }
 
   render() {

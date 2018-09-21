@@ -7,13 +7,17 @@ try {
 }
 
 module.exports = functions.database
-  .ref('/users/:uid/username')
+  .ref('/users/{uid}/username')
   .onWrite((eventSnapshot, context) => {
     const { uid } = context.params;
-    const username = eventSnapshot.val();
+    let username = eventSnapshot.after.val();
 
-    admin
-      .database()
-      .ref(`/usernames/${username}`)
-      .set(uid);
+    if (username) {
+      const ref = admin.database().ref(`/usernames/${username}`);
+      ref.set(uid);
+    } else {
+      username = eventSnapshot.before.val();
+      const ref = admin.database().ref(`/usernames/${username}`);
+      ref.remove();
+    }
   });

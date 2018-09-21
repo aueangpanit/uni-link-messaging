@@ -1,5 +1,4 @@
 import firebase from 'firebase';
-import axios from 'axios';
 import React, { Component } from 'react';
 import { StyleSheet, Text } from 'react-native';
 import { Card, CardSection, Input, Button, Spinner } from './common';
@@ -35,20 +34,12 @@ class SignupForm extends Component {
       .auth()
       .createUserWithEmailAndPassword(email.trim(), password);
     const { uid } = firebase.auth().currentUser; // get current user
-    // create username index
-    const usernameIndexRef = FirebaseUtils.getUsernameIndexRef(username);
-    await usernameIndexRef.set(uid);
     // set username field in user's tree
-    const userUsernameRef = FirebaseUtils.getUserUsernameRef(uid);
-    await axios.post(
-      'https://us-central1-uni-link-messaging-eba97.cloudfunctions.net/dbUsersUsernameOnUpdate',
-      {
-        uid,
-        username
-      }
-    );
-    console.log('done');
-    //await userUsernameRef.set(username);
+    const dbUsersUsernameWrite = firebase
+      .functions()
+      .httpsCallable('dbUsersUsernameWrite');
+    const res = await dbUsersUsernameWrite({ username });
+    console.log(res);
     // set user's visibility to true
     const userVisibilityRef = FirebaseUtils.getUserVisibilityRef(uid);
     await userVisibilityRef.set(true);
@@ -59,12 +50,12 @@ class SignupForm extends Component {
     const error = await this.validate();
 
     if (!error) {
-      try {
-        await this.createUser();
-        this.onSignupSuccess();
-      } catch (error) {
+      //try {
+      await this.createUser();
+      this.onSignupSuccess();
+      /*} catch (error) {
         this.onSignupFail(error);
-      }
+      }*/
     } else {
       this.onSignupFail(error);
     }
