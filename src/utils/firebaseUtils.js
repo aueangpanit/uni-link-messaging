@@ -21,7 +21,6 @@ class FirebaseUtils {
       .ref(`/users/${receiverId}/friendRequest/${senderId}/${receiverId}`);
 
   static userExists = uid => {
-    console.log(uid);
     return firebase
       .database()
       .ref(`/users/${uid}/visible`)
