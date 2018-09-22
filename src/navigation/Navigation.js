@@ -9,19 +9,14 @@ import {
   SignupScreen,
   MessageListScreen,
   AddUserScreen,
-  FriendListScreen,
   ProfileScreen
 } from '../screens';
 
 const Messages = createStackNavigator(
-  { MessageList: MessageListScreen },
+  { MessageList: MessageListScreen, AddUser: AddUserScreen },
   {
     initialRouteName: 'MessageList'
   }
-);
-const Friends = createStackNavigator(
-  { FriendList: FriendListScreen, AddUser: AddUserScreen },
-  { initialRouteName: 'FriendList' }
 );
 const Profile = createStackNavigator({ Profile: ProfileScreen });
 
@@ -30,7 +25,7 @@ const AuthStack = createStackNavigator(
   { initialRouteName: 'Login' }
 );
 const AppStack = createBottomTabNavigator(
-  { Messages, Friends, Profile },
+  { Messages, Profile },
   {
     initialRouteName: 'Messages'
   }

@@ -23,9 +23,8 @@ module.exports = functions.https.onCall((data, context) => {
     );
   }
 
-  // Check if username already exists.
   return admin
-    .database()
+    .database() // Check if username already exists.
     .ref(`/username/${username}`)
     .once('value')
     .then(snapshot => {

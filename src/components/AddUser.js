@@ -2,7 +2,7 @@ import firebase from 'firebase';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Card, CardSection, Input, Button, Spinner } from './common';
-import { sendFriendRequest } from '../actions';
+import { createChat } from '../actions';
 
 class AddUser extends Component {
   state = {
@@ -17,7 +17,7 @@ class AddUser extends Component {
     let error = '';
 
     if (currentUser.uid === value) {
-      error = "You can't send yourself a friend request!";
+      error = "You can't add yourself!";
     }
 
     this.setState({ error });
@@ -27,10 +27,10 @@ class AddUser extends Component {
   onButtonPress() {
     const error = this.validate();
     const { value, loading } = this.state;
-    const { sendFriendRequest } = this.props;
+    const { createChat } = this.props;
 
     if (!error && !loading) {
-      sendFriendRequest({ value });
+      createChat({ value });
     }
   }
 
@@ -38,11 +38,7 @@ class AddUser extends Component {
     const { loading } = this.state;
 
     if (loading) return <Spinner size="small" />;
-    return (
-      <Button onPress={this.onButtonPress.bind(this)}>
-        Send friend request
-      </Button>
-    );
+    return <Button onPress={this.onButtonPress.bind(this)}>Add User</Button>;
   }
 
   render() {
@@ -52,8 +48,8 @@ class AddUser extends Component {
       <Card>
         <CardSection>
           <Input
-            placeholder="OoDU2lR4xgdt2WAHdDiWppxLNsm1"
-            label="uid"
+            placeholder="username"
+            label="username"
             value={value}
             onChangeText={value => this.setState({ value })}
           />
@@ -66,6 +62,6 @@ class AddUser extends Component {
 
 AddUser = connect(
   null,
-  { sendFriendRequest }
+  { createChat }
 )(AddUser);
 export { AddUser };

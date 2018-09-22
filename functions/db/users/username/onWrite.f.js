@@ -13,9 +13,11 @@ module.exports = functions.database
     let username = eventSnapshot.after.val();
 
     if (username) {
+      // username being created or updated
       const ref = admin.database().ref(`/usernames/${username}`);
       ref.set(uid);
     } else {
+      // username being deleted
       username = eventSnapshot.before.val();
       const ref = admin.database().ref(`/usernames/${username}`);
       ref.remove();

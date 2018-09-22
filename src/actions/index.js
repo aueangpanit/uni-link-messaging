@@ -1,2 +1,2 @@
 export * from './UserActions';
-export * from './FriendActions';
+export * from './ChatActions';
