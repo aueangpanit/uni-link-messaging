@@ -1,7 +1,7 @@
 import { FETCH_USER_SUCCESS } from '../actions/types';
 
 const INITIAL_STATE = {
-  friendRequest: {}
+  messages: {}
 };
 
 export default (state = INITIAL_STATE, action) => {

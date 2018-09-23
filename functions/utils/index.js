@@ -50,4 +50,24 @@ Utils.getUid = user => {
     });
 };
 
+Utils.getUsername = uid => {
+  return admin
+    .database()
+    .ref(`/user/${uid}/username`)
+    .once('value')
+    .then(snapshot => {
+      const username = snapshot.val();
+      if (!username) {
+        throw new functions.https.HttpsError(
+          'invalid-argument',
+          'User does not exist',
+          'User does not exist'
+        );
+      }
+
+      return username;
+    })
+    .catch(error => error);
+};
+
 module.exports = Utils;

@@ -5,6 +5,7 @@ try {
 } catch (e) {
   console.log(e);
 }
+const Utils = require('../../utils');
 
 module.exports = functions.https.onCall((data, context) => {
   if (!context.auth) {
@@ -16,22 +17,35 @@ module.exports = functions.https.onCall((data, context) => {
   }
 
   const { uid } = context.auth;
+  const { receiverId } = data;
+  let key;
 
-  let userObj = {};
-  userObj[uid] = true;
-  const { key } = admin
-    .database()
-    .ref('/chats')
-    .push({
-      users: userObj
-    });
+  return Utils.getUid(receiverId)
+    .then(receiverId => {
+      let userObj = {};
+      userObj[uid] = true;
+      userObj[receiverId] = true;
+      const chatRef = admin
+        .database()
+        .ref('/chats')
+        .push({
+          users: userObj
+        });
+      key = chatRef.key;
 
-  return admin
-    .database()
-    .ref(`/users/${uid}/chats/${key}`)
-    .set(true)
+      return admin
+        .database()
+        .ref(`/users/${receiverId}/chats/${key}`)
+        .set(true);
+    })
     .then(() => {
-      return { success: 'Successfully created new chat.' };
+      return admin
+        .database()
+        .ref(`/users/${uid}/chats/${key}`)
+        .set(true);
+    })
+    .then(() => {
+      return { success: 'Chat successfully created.' };
     })
     .catch(error => error);
 });

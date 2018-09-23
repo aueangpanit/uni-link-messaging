@@ -6,14 +6,12 @@ import { CardSection } from '../common';
 
 class ListItem extends Component {
   render() {
-    const { currentUser } = firebase.auth();
-    const { sender, receiver } = this.props.request;
+    const { id } = this.props;
+
     return (
       <View>
         <CardSection>
-          <Text
-            style={styles.titleStyle}
-          >{`sender: ${sender}\nreceiver: ${receiver}`}</Text>
+          <Text style={styles.titleStyle}>{id}</Text>
         </CardSection>
       </View>
     );

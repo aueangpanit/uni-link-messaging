@@ -2,7 +2,6 @@ import _ from 'lodash';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { ListView } from 'react-native';
-import ListItem from './ListItem';
 
 class FriendList extends Component {
   componentWillMount() {

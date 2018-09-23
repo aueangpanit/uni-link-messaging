@@ -10,16 +10,6 @@ class FirebaseUtils {
   static getUserVisibilityRef = uid =>
     firebase.database().ref(`/users/${uid}/visible`);
 
-  static getUserFriendRequestRef = ({ senderId, receiverId }) =>
-    firebase
-      .database()
-      .ref(`/users/${senderId}/friendRequest/${senderId}/${receiverId}`);
-
-  static getReceiverFriendRequestRef = ({ senderId, receiverId }) =>
-    firebase
-      .database()
-      .ref(`/users/${receiverId}/friendRequest/${senderId}/${receiverId}`);
-
   static userExists = uid => {
     return firebase
       .database()

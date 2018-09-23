@@ -1,4 +1,4 @@
-import { FETCH_USER_SUCCESS } from './types';
+import { FETCH_USER_SUCCESS, FETCH_CHAT_SUCCESS } from './types';
 import firebase from 'firebase';
 
 export const fetchUser = () => dispatch => {
@@ -6,8 +6,17 @@ export const fetchUser = () => dispatch => {
 
   firebase
     .database()
-    .ref(`/users/${currentUser.uid}`)
-    .on('value', snapshot => {
-      dispatch({ type: FETCH_USER_SUCCESS, payload: snapshot.val() });
+    .ref(`/users/${currentUser.uid}/chats`)
+    .on('child_added', snapshot => {
+      const chatId = snapshot.key;
+      firebase
+        .database()
+        .ref(`/chats/${chatId}`)
+        .on('value', snapshot => {
+          dispatch({
+            type: FETCH_CHAT_SUCCESS,
+            payload: { chatId, chat: snapshot.val() }
+          });
+        });
     });
 };
