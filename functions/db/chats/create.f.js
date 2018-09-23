@@ -17,11 +17,21 @@ module.exports = functions.https.onCall((data, context) => {
   }
 
   const { uid } = context.auth;
-  const { receiverId } = data;
-  let key;
+  let { receiverId } = data;
+  let key, senderUsername;
 
   return Utils.getUid(receiverId)
-    .then(receiverId => {
+    .then(id => {
+      receiverId = id;
+
+      return Utils.getUsername(uid);
+    })
+    .then(username => {
+      senderUsername = username;
+
+      return Utils.getUsername(receiverId);
+    })
+    .then(receiverUsername => {
       let userObj = {};
       userObj[uid] = true;
       userObj[receiverId] = true;
@@ -29,7 +39,8 @@ module.exports = functions.https.onCall((data, context) => {
         .database()
         .ref('/chats')
         .push({
-          users: userObj
+          users: userObj,
+          title: `${receiverUsername}, ${senderUsername}`
         });
       key = chatRef.key;
 

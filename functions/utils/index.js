@@ -1,3 +1,4 @@
+const functions = require('firebase-functions');
 const admin = require('firebase-admin');
 try {
   admin.initializeApp();
@@ -53,7 +54,7 @@ Utils.getUid = user => {
 Utils.getUsername = uid => {
   return admin
     .database()
-    .ref(`/user/${uid}/username`)
+    .ref(`/users/${uid}/username`)
     .once('value')
     .then(snapshot => {
       const username = snapshot.val();

@@ -6,12 +6,12 @@ import { CardSection } from '../common';
 
 class ListItem extends Component {
   render() {
-    const { id } = this.props;
+    const { id, title } = this.props;
 
     return (
       <View>
         <CardSection>
-          <Text style={styles.titleStyle}>{id}</Text>
+          <Text style={styles.titleStyle}>{title}</Text>
         </CardSection>
       </View>
     );

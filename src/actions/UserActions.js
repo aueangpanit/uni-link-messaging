@@ -1,4 +1,8 @@
-import { FETCH_USER_SUCCESS, FETCH_CHAT_SUCCESS } from './types';
+import {
+  FETCH_USER_SUCCESS,
+  FETCH_CHAT_SUCCESS,
+  DELETE_CHAT_SUCCESS
+} from './types';
 import firebase from 'firebase';
 
 export const fetchUser = () => dispatch => {
@@ -18,5 +22,16 @@ export const fetchUser = () => dispatch => {
             payload: { chatId, chat: snapshot.val() }
           });
         });
+    });
+
+  firebase
+    .database()
+    .ref(`/users/${currentUser.uid}/chats`)
+    .on('child_removed', snapshot => {
+      const chatId = snapshot.key;
+      dispatch({
+        type: DELETE_CHAT_SUCCESS,
+        payload: chatId
+      });
     });
 };

@@ -13,7 +13,7 @@ class MessageList extends Component {
   keyExtractor = (item, index) => item.id;
 
   renderItem({ item }) {
-    return <ListItem id={item.id} />;
+    return <ListItem id={item.id} title={item.title} />;
   }
 
   render() {
@@ -30,9 +30,12 @@ class MessageList extends Component {
 const mapStateToProps = state => {
   const { chat } = state;
 
+  console.log(chat);
+
   const chats = _.map(chat, (value, chatId) => {
-    return { id: chatId };
+    return { id: chatId, title: value.title };
   });
+
   return { chats };
 };
 
