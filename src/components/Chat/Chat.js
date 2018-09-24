@@ -4,7 +4,7 @@ import React, { Component } from 'react';
 import { withNavigation } from 'react-navigation';
 import { Input, Button, Card, CardSection, Spinner } from '../common';
 import { connect } from 'react-redux';
-import { fetchMessage } from '../../actions';
+import { fetchMessage, stopFetchingMessage } from '../../actions';
 import { FlatList, View, Text } from 'react-native';
 import Item from './Item';
 
@@ -17,26 +17,35 @@ class Chat extends Component {
   componentWillMount() {
     const { fetchMessage } = this.props;
     const chatId = this.props.navigation.getParam('chatId');
-    fetchMessage({ chatId });
+    fetchMessage(chatId);
   }
 
   async sendMessage() {
     const chatId = this.props.navigation.getParam('chatId');
     const { message } = this.state;
 
-    this.setState({ loading: true, message: '' });
-    try {
-      const dbMessagesWrite = firebase
-        .functions()
-        .httpsCallable('dbMessagesWrite');
-      const { data } = await dbMessagesWrite({ chatId, message });
+    if (message.length) {
+      this.setState({ loading: true, message: '' });
+      try {
+        const dbMessagesWrite = firebase
+          .functions()
+          .httpsCallable('dbMessagesWrite');
+        const { data } = await dbMessagesWrite({ chatId, message });
 
-      if (!data.success) throw data;
+        if (!data.success) throw data;
 
-      this.setState({ loading: false });
-    } catch (error) {
-      alert(error.details);
+        this.setState({ loading: false });
+      } catch (error) {
+        alert(error.details);
+      }
     }
+  }
+
+  componentWillUnmount() {
+    const { stopFetchingMessage } = this.props;
+    const chatId = this.props.navigation.getParam('chatId');
+
+    stopFetchingMessage(chatId);
   }
 
   keyExtractor = (item, index) => item.time;
@@ -64,6 +73,7 @@ class Chat extends Component {
     return (
       <React.Fragment>
         <FlatList
+          inverted
           data={this.props.messages}
           keyExtractor={this.keyExtractor}
           renderItem={this.renderItem}
@@ -99,7 +109,7 @@ const mapStateToProps = state => {
 
 Chat = connect(
   mapStateToProps,
-  { fetchMessage }
+  { fetchMessage, stopFetchingMessage }
 )(Chat);
 Chat = withNavigation(Chat);
 export { Chat };

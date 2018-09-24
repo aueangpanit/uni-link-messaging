@@ -7,7 +7,7 @@ export default (state = INITIAL_STATE, action) => {
     case FETCH_MESSAGE_SUCCESS:
       const messageObj = {};
       messageObj[action.payload.messageId] = action.payload.message;
-      return { ...state, ...messageObj };
+      return { ...messageObj, ...state };
     default:
       return state;
   }

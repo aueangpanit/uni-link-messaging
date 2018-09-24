@@ -20,8 +20,8 @@ module.exports = functions.https.onCall((data, context) => {
   if (typeof message !== 'string' || message.length === 0) {
     return new functions.https.HttpsError(
       'invalid-argument',
-      'The function must be called with "data" argument containing "userId" of type string',
-      'The function must be called with "data" argument containing "userId" of type string'
+      'The function must be called with "data" argument containing "message" of type string',
+      'The function must be called with "data" argument containing "message" of type string'
     );
   }
   if (typeof chatId !== 'string' || chatId.length === 0) {
