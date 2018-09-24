@@ -38,8 +38,12 @@ class SignupForm extends Component {
     const dbUsersUsernameWrite = firebase
       .functions()
       .httpsCallable('dbUsersUsernameWrite');
-    const res = await dbUsersUsernameWrite({ username });
-    console.log(res);
+    try {
+      const { data } = await dbUsersUsernameWrite({ username });
+      if (!data.success) throw data;
+    } catch (error) {
+      alert(error.details);
+    }
     // set user's visibility to true
     const userVisibilityRef = FirebaseUtils.getUserVisibilityRef(uid);
     await userVisibilityRef.set(true);

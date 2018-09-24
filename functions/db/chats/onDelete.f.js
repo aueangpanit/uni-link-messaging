@@ -7,7 +7,7 @@ try {
 }
 
 module.exports = functions.database
-  .ref('/chats/{chatId}/')
+  .ref('/chats/{chatId}')
   .onDelete((eventSnapshot, context) => {
     const { chatId } = context.params;
 

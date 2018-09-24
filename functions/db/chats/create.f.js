@@ -32,13 +32,39 @@ module.exports = functions.https.onCall((data, context) => {
     .then(id => {
       receiverId = id;
 
+      if (receiverId === context.auth.uid) {
+        throw new functions.https.HttpsError(
+          'invalid-argument',
+          'You cannot add yourself',
+          'You cannot add yourself'
+        );
+      }
+
       return admin
         .database()
         .ref(`/users/${uid}/connections/${receiverId}`)
         .once('value');
     })
     .then(snapshot => {
-      if (snapshot.val() !== null && snapshot.val().length > 0) {
+      if (
+        snapshot.val() !== null &&
+        snapshot.val().length > 0 &&
+        typeof snapshot.val() === 'string'
+      ) {
+        // user seems to already have a chat together
+        // check if chat actually exists.
+
+        return admin
+          .database()
+          .ref(`/chats/${snapshot.val()}`)
+          .once('value');
+      }
+
+      return { val: () => true };
+    })
+    .then(snapshot => {
+      if (snapshot.val() !== null) {
+        // chat does exits
         throw new functions.https.HttpsError(
           'invalid-argument',
           'You already have a chat with that user.',
