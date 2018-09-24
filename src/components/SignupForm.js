@@ -1,6 +1,7 @@
 import firebase from 'firebase';
 import React, { Component } from 'react';
 import { StyleSheet, Text } from 'react-native';
+import { withNavigation } from 'react-navigation';
 import { Card, CardSection, Input, Button, Spinner } from './common';
 import { FirebaseUtils } from '../utils';
 
@@ -30,23 +31,25 @@ class SignupForm extends Component {
   async createUser() {
     const { email, password, username } = this.state;
     // create user
-    await firebase
-      .auth()
-      .createUserWithEmailAndPassword(email.trim(), password);
-    const { uid } = firebase.auth().currentUser; // get current user
-    // set username field in user's tree
-    const dbUsersUsernameWrite = firebase
-      .functions()
-      .httpsCallable('dbUsersUsernameWrite');
     try {
+      await firebase
+        .auth()
+        .createUserWithEmailAndPassword(email.trim(), password);
+      const { uid } = firebase.auth().currentUser; // get current user
+      // set username field in user's tree
+      const dbUsersUsernameWrite = firebase
+        .functions()
+        .httpsCallable('dbUsersUsernameWrite');
+
       const { data } = await dbUsersUsernameWrite({ username });
       if (!data.success) throw data;
+
+      // set user's visibility to true
+      const userVisibilityRef = FirebaseUtils.getUserVisibilityRef(uid);
+      await userVisibilityRef.set(true);
     } catch (error) {
       alert(error.details);
     }
-    // set user's visibility to true
-    const userVisibilityRef = FirebaseUtils.getUserVisibilityRef(uid);
-    await userVisibilityRef.set(true);
   }
 
   async onButtonPress() {
@@ -54,19 +57,14 @@ class SignupForm extends Component {
     const error = await this.validate();
 
     if (!error) {
-      //try {
       await this.createUser();
       this.onSignupSuccess();
-      /*} catch (error) {
-        this.onSignupFail(error);
-      }*/
     } else {
       this.onSignupFail(error);
     }
   }
 
   onSignupSuccess() {
-    this.setState({ error: '', loading: false, email: '', password: '' });
     this.props.navigation.navigate('App');
   }
 
@@ -141,4 +139,5 @@ const styles = StyleSheet.create({
   }
 });
 
+SignupForm = withNavigation(SignupForm);
 export { SignupForm };
