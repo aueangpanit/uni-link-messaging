@@ -1,5 +1,4 @@
 import firebase from 'firebase';
-import 'firebase/functions';
 import { NavigationActions } from 'react-navigation';
 
 export const createChat = ({ value }) => async dispatch => {
@@ -14,16 +13,3 @@ export const createChat = ({ value }) => async dispatch => {
     alert(error.details);
   }
 };
-export const sendMessage = ({ chatId, message }) => async dispatch => {
-  try {
-    const dbMessagesWrite = firebase
-      .functions()
-      .httpsCallable('dbMessagesWrite');
-    const { data } = await dbMessagesWrite({ chatId, message });
-    if (!data.success) throw data;
-  } catch (error) {
-    alert(error.details);
-  }
-};
-
-export const fetchMessage = ({ chatId }) => async dispatch => {};
