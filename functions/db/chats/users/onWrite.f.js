@@ -10,7 +10,7 @@ module.exports = functions.database
   .ref('/chats/{chatId}/users/{uid}')
   .onWrite((eventSnapshot, context) => {
     const { chatId, uid } = context.params;
-    let value = eventSnapshot.after.val();
+    const value = eventSnapshot.after.val();
 
     if (value) {
       // being created or updated

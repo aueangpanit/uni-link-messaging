@@ -9,7 +9,7 @@ const Utils = require('../../utils');
 
 module.exports = functions.https.onCall((data, context) => {
   if (!context.auth) {
-    throw new functions.https.HttpsError(
+    return new functions.https.HttpsError(
       'failed-precondition',
       'The function must be called while authenticated.',
       'The function must be called while authenticated.'
@@ -20,9 +20,31 @@ module.exports = functions.https.onCall((data, context) => {
   let { receiverId } = data;
   let key, senderUsername;
 
+  if (typeof receiverId !== 'string' || receiverId.length === 0) {
+    return new functions.https.HttpsError(
+      'invalid-argument',
+      "The value that you've given is not valid",
+      "The value that you've given is not valid"
+    );
+  }
+
   return Utils.getUid(receiverId)
     .then(id => {
       receiverId = id;
+
+      return admin
+        .database()
+        .ref(`/users/${uid}/connections/${receiverId}`)
+        .once('value');
+    })
+    .then(snapshot => {
+      if (snapshot.val() !== null && snapshot.val().length > 0) {
+        throw new functions.https.HttpsError(
+          'invalid-argument',
+          'You already have a chat with that user.',
+          'You already have a chat with that user.'
+        );
+      }
 
       return Utils.getUsername(uid);
     })
@@ -52,8 +74,20 @@ module.exports = functions.https.onCall((data, context) => {
     .then(() => {
       return admin
         .database()
+        .ref(`/users/${receiverId}/connections/${uid}`)
+        .set(key);
+    })
+    .then(() => {
+      return admin
+        .database()
         .ref(`/users/${uid}/chats/${key}`)
         .set(true);
+    })
+    .then(() => {
+      return admin
+        .database()
+        .ref(`/users/${uid}/connections/${receiverId}`)
+        .set(key);
     })
     .then(() => {
       return { success: 'Chat successfully created.' };

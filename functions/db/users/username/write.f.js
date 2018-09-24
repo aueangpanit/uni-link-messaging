@@ -9,14 +9,14 @@ try {
 module.exports = functions.https.onCall((data, context) => {
   const { username } = data;
   if (typeof username !== 'string' || username.length === 0) {
-    throw new functions.https.HttpsError(
+    return new functions.https.HttpsError(
       'invalid-argument',
       'The function must be called with "data" argument containing "username" of type string.',
       'The function must be called with "data" argument containing "username" of type string.'
     );
   }
   if (!context.auth) {
-    throw new functions.https.HttpsError(
+    return new functions.https.HttpsError(
       'failed-precondition',
       'The function must be called while authenticated.',
       'The function must be called while authenticated.'
@@ -40,10 +40,8 @@ module.exports = functions.https.onCall((data, context) => {
       return admin
         .database()
         .ref(`/users/${uid}/username`)
-        .set(username)
-        .then(() => ({ success: 'Username updated successfully.' }));
+        .set(username);
     })
-    .catch(error => {
-      return error;
-    });
+    .then(() => ({ success: 'Username updated successfully.' }))
+    .catch(error => error);
 });

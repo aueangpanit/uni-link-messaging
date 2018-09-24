@@ -8,12 +8,13 @@ import {
   LoginScreen,
   SignupScreen,
   MessageListScreen,
+  ChatScreen,
   AddUserScreen,
   ProfileScreen
 } from '../screens';
 
 const Messages = createStackNavigator(
-  { MessageList: MessageListScreen, AddUser: AddUserScreen },
+  { MessageList: MessageListScreen, AddUser: AddUserScreen, Chat: ChatScreen },
   {
     initialRouteName: 'MessageList'
   }

@@ -46,9 +46,7 @@ Utils.getUid = user => {
 
       return (user = snapshot.val()); // user = uid
     })
-    .catch(error => {
-      return error;
-    });
+    .catch(error => Promise.reject(error));
 };
 
 Utils.getUsername = uid => {
@@ -68,7 +66,7 @@ Utils.getUsername = uid => {
 
       return username;
     })
-    .catch(error => error);
+    .catch(error => Promise.reject(error));
 };
 
 module.exports = Utils;

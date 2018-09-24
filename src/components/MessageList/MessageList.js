@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { View, Text, FlatList } from 'react-native';
+import { FlatList } from 'react-native';
 import ListItem from './ListItem';
 import { fetchUser } from '../../actions';
 
@@ -29,8 +29,6 @@ class MessageList extends Component {
 
 const mapStateToProps = state => {
   const { chat } = state;
-
-  console.log(chat);
 
   const chats = _.map(chat, (value, chatId) => {
     return { id: chatId, title: value.title };
