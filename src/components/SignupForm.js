@@ -31,36 +31,38 @@ class SignupForm extends Component {
   async createUser() {
     const { email, password, username } = this.state;
     // create user
-    try {
-      await firebase
-        .auth()
-        .createUserWithEmailAndPassword(email.trim(), password);
-      const { uid } = firebase.auth().currentUser; // get current user
-      // set username field in user's tree
-      const dbUsersUsernameWrite = firebase
-        .functions()
-        .httpsCallable('dbUsersUsernameWrite');
 
-      const { data } = await dbUsersUsernameWrite({ username });
-      if (!data.success) throw data;
+    await firebase
+      .auth()
+      .createUserWithEmailAndPassword(email.trim(), password);
+    const { uid } = firebase.auth().currentUser; // get current user
+    // set username field in user's tree
+    const dbUsersUsernameWrite = firebase
+      .functions()
+      .httpsCallable('dbUsersUsernameWrite');
 
-      // set user's visibility to true
-      const userVisibilityRef = FirebaseUtils.getUserVisibilityRef(uid);
-      await userVisibilityRef.set(true);
-    } catch (error) {
-      alert(error.details);
-    }
+    const { data } = await dbUsersUsernameWrite({ username });
+    if (!data.success) throw data;
+
+    // set user's visibility to true
+    const userVisibilityRef = FirebaseUtils.getUserVisibilityRef(uid);
+    await userVisibilityRef.set(true);
   }
 
   async onButtonPress() {
     this.setState({ loading: true });
     const error = await this.validate();
 
-    if (!error) {
-      await this.createUser();
-      this.onSignupSuccess();
-    } else {
-      this.onSignupFail(error);
+    try {
+      if (!error) {
+        await this.createUser();
+        this.onSignupSuccess();
+      } else {
+        this.onSignupFail(error);
+      }
+    } catch (error) {
+      this.setState({ loading: false });
+      alert(error.details || error);
     }
   }
 
