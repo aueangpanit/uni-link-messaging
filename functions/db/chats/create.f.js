@@ -63,7 +63,7 @@ module.exports = functions.https.onCall((data, context) => {
       return { val: () => true };
     })
     .then(snapshot => {
-      if (snapshot.val() !== null) {
+      if (snapshot.val() !== true) {
         // chat does exits
         throw new functions.https.HttpsError(
           'invalid-argument',
