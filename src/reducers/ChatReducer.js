@@ -1,9 +1,15 @@
-import { FETCH_CHAT_SUCCESS, DELETE_CHAT_SUCCESS } from '../actions/types';
+import {
+  FETCH_CHAT_SUCCESS,
+  DELETE_CHAT_SUCCESS,
+  CLEAR_CHAT
+} from '../actions/types';
 
 const INITIAL_STATE = {};
 
 export default (state = INITIAL_STATE, action) => {
   switch (action.type) {
+    case CLEAR_CHAT:
+      return {};
     case FETCH_CHAT_SUCCESS:
       let chatObj = {};
       chatObj[action.payload.chatId] = action.payload.chat;
