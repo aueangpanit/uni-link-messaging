@@ -1,7 +1,9 @@
 import firebase from 'firebase';
-import { FETCH_MESSAGE_SUCCESS } from './types';
+import { FETCH_MESSAGE_SUCCESS, CLEAR_MESSAGE } from './types';
 
 export const fetchMessage = chatId => dispatch => {
+  dispatch({ type: CLEAR_MESSAGE });
+
   firebase
     .database()
     .ref(`/messages/${chatId}`)
